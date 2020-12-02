@@ -26,9 +26,9 @@ class OrbitNode
 
     def bf_traverse(&prc)
         queue = [self]
-        until stack.empty? 
-            current = stack.shift
-            stack.concat(current.children)
+        until queue.empty? 
+            current = queue.shift
+            queue.concat(current.children)
             prc.call(current)
         end 
         nil
@@ -61,8 +61,7 @@ def build_tree(inputs)
     hash = Hash.new
     inputs.map! {|el| parse_line(el) }
     inputs.each do |el|
-        parent = el[0] 
-        child = el[1]
+        parent, child = el
         if hash[child]
             child = hash[child]
         else 
@@ -89,6 +88,44 @@ end
 
 input = File.new('input.txt').readlines.map(&:chomp)
 root = build_tree(input)
-puts root.count_all
+# puts "answer 1"
+# puts root.count_all
 
 
+# puts "answer 2"
+san_parents = []
+you_parents = []
+root.bf_traverse do |node|
+    if node.val == "SAN" 
+        node = node.parent
+        while node.parent
+            san_parents << node
+            node = node.parent
+        end
+    elsif node.val == "YOU"
+        node = node.parent
+        while node.parent
+            you_parents << node
+            node = node.parent
+        end
+    end
+end
+
+sum1 = nil
+sum2 = nil
+san_parents.each_with_index do |el, i|
+    j = you_parents.index(el)
+    if j
+        sum1 = j + i
+        break
+    end
+end
+you_parents.each_with_index do |el, i|
+    j = san_parents.index(el)
+    if j
+        sum2 = j + i
+        break
+    end
+end
+puts sum1
+puts sum2 

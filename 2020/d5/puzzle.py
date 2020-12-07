@@ -1,3 +1,6 @@
+# i know that doing this with that tree is silly
+# i just wanted to make a tree in python
+
 from math import floor
 
 inputs = []

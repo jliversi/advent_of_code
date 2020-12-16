@@ -3,7 +3,7 @@ from functools import reduce
 
 nums = []
 idxs = []
-with open('test_input.txt') as f:
+with open('input.txt') as f:
   arr = f.readline().split(',')
   for i in range(len(arr)):
     el = arr[i]
@@ -14,24 +14,54 @@ with open('test_input.txt') as f:
 diffs = []
 on_first = True
 for el in zip(nums,idxs):
-  if on_first:
-    diffs.append(0)
-    on_first = False 
-  else:
-    diffs.append(el[0] - el[1])
+  # if on_first:
+  #   diffs.append(0)
+  #   on_first = False 
+  # else:
+  diffs.append(el[0] - el[1])
 
 print(list(zip(nums,idxs)))
 print(diffs)
 
-# X mod nums[i] = idxs[i]
-# X = idxs[i] (mod nums[i])
+
 
 
 N = reduce(lambda x,y: x * y, nums)
-print(N)
+
+def eea(a, b):
+  s, old_s = 0, 1
+  t, old_t = 1, 0
+  # r is remainder at each step of Euclid Algo
+  # after each step, b and r become a and b respectively of next step 
+  r, old_r = b, a
+
+  while r > 0:
+    quotient = old_r // r
+    old_r, r = r, old_r - quotient * r
+    old_s, s = s, old_s - quotient * s
+    old_t, t = t, old_t - quotient * t
+
+  #gcd, bezout coeffs 
+  return [old_r, old_s, old_t]
 
 def mod_inverse(a,b):
+  # a * x = 1 (mod b), find x
+  return eea(a,b)[1] % b
 
+
+# X mod nums[i] = diffs[i]
+# X = diffs[i] (mod nums[i])
+
+def crt():
+  total = 0
+  for i in range(len(nums)):
+    ai = diffs[i]
+    ni = nums[i]
+    bi = N // ni
+    b_p = mod_inverse(bi, ni)
+    total += (ai * bi * b_p)
+  
+  return total % N
 
 
 

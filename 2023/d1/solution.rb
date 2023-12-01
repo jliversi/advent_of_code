@@ -33,14 +33,12 @@ num_strings = [
   "9"
 ]
 
-first_num_regex = Regexp.new(num_strings.join("|"))
-last_num_regex = Regexp.new(num_strings.map(&:reverse).join("|"))
-
+regex = Regexp.new("(?=(#{num_strings.join("|")}))")
 
 total = 0
 input.each do |line|
-  first_num = line[first_num_regex]
-  last_num = line.reverse[last_num_regex].reverse
+  matches = line.scan(regex).flatten
+  first_num, last_num = matches[0], matches[-1]
   first_num = first_num.to_i > 0 ? first_num : num_strings[num_strings.index(first_num) + 9]
   last_num = last_num.to_i > 0 ? last_num : num_strings[num_strings.index(last_num) + 9]
   total += (first_num + last_num).to_i
